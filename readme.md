@@ -1,2 +1,1 @@
-init
-init 2 XD
+# Uratuj rozbitków dzięki twierdzeniu Bayesa
