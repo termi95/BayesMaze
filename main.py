@@ -73,6 +73,32 @@ def find_shortest_path(matrix, start, target):
 
     return None
 
+def calculate_probabilities(matrix):
+    rows, cols = matrix.shape
+    target_position = np.where(matrix == 2)  # Pozycja celu
+
+    if len(target_position[0]) == 0:
+        print("Nie znaleziono celu.")
+        return None
+
+    target_x, target_y = target_position[0][0], target_position[1][0]
+    probabilities = np.zeros((rows, cols))
+
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j] == 3:
+                probabilities[i][j] = 0
+            else:                
+                distance = abs(i - target_x) + abs(j - target_y)
+                probabilities[i][j] = 1 / (distance + 1)
+                    
+    probabilities /= np.sum(probabilities)
+    for i in range(rows):
+        for j in range(cols):
+            probabilities[i][j] = "{:.2f}".format(probabilities[i][j])
+
+    return probabilities
+
 game_map = create_map()
 
 con = 1
@@ -85,3 +111,5 @@ print(game_map)
     
 path = find_shortest_path(game_map, start_position, target_value)
 print(path)
+probabilities = calculate_probabilities(game_map)
+print(probabilities)
