@@ -27,30 +27,23 @@ def generate_obstacles():
         obstacles[obstacle_position] = 1
     return obstacles
 
-def create_map():
+def create_map():    
+    survivor = generate_survivor()
+    rescuers = [start_position] * num_rescuers
+    obstacles = generate_obstacles()
+    
     game_map = np.zeros(map_size, dtype=np.uint8)
     for rescuer in rescuers:
-        game_map[rescuer] = 1  # 1 reprezentuje ratownika
-    game_map[obstacles == 1] = 3  # 3 reprezentuje przeszkody
-    game_map[survivor] = 2  # 2 reprezentuje rozbitka
+        game_map[rescuer] = 1  # 1 ratownicu
+    game_map[obstacles == 1] = 3  # 3 przeszkody
+    game_map[survivor] = 2  # 2 rozbitkowie
     return game_map
 
-survivor = generate_survivor()
-rescuers = [start_position] * num_rescuers
-obstacles = generate_obstacles()
 
-def can_reach_target(matrix, start, target, visited):
-    x, y = start
-    if matrix[x][y] == target:
-        return True
-    visited.add(start)
-    rows, cols = len(matrix), len(matrix[0])
-    for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-        nx, ny = x + dx, y + dy
-        if 0 <= nx < rows and 0 <= ny < cols and matrix[nx][ny] != 3 and (nx, ny) not in visited:
-            if can_reach_target(matrix, (nx, ny), target, visited):
-                return True
-    return False
+def can_reach_target(_path, _map):
+  last_step = len(_path) - 1
+  last_step_value = _map[_path[last_step][0]][_path[last_step][1]]
+  return last_step_value == 2
 
 def find_shortest_path(matrix, start, target):
     rows, cols = len(matrix), len(matrix[0])
@@ -99,17 +92,15 @@ def calculate_probabilities(matrix):
 
     return probabilities
 
-game_map = create_map()
-
-con = 1
-while  con == 1:    
-    if can_reach_target(game_map, start_position, target_value,visited):
-        con = 0
+while  True:    
     game_map = create_map()
+    path = find_shortest_path(game_map, start_position, target_value)    
+    if path is not None and can_reach_target(path, game_map):
+        break
+    print('Map was impossible to solve, new map is generating.')
         
 print(game_map)
     
-path = find_shortest_path(game_map, start_position, target_value)
 print(path)
 probabilities = calculate_probabilities(game_map)
 print(probabilities)
