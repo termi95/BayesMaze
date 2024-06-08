@@ -11,6 +11,7 @@ obstacle_density = 0.3
 start_position = (0, 0)
 target_value = 2
 visited = set()
+game_images_dic = {1:'',2:'',3:'images/rocks.jpg'}
 
 def generate_survivor():
     while True:
@@ -95,7 +96,7 @@ def calculate_probabilities(matrix):
 
 def get_html_game_board(game_map):    
     rows, cols = game_map.shape
-    return render_template("game_board.html", rows=rows, cols=cols, game_map=game_map)
+    return render_template("game_board.html", rows=rows, cols=cols, game_map=game_map, images = game_images_dic)
     
 def get_game_data():
     data = {}

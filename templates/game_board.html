@@ -4,11 +4,7 @@
         <div class="w-full grid grid-cols-4 grid-rows-4 gap-px">
           {% for i in range(rows) %}
             {% for j in range(cols) %}
-                <div class="bg-white px-3 py-2"
-                    {% if  game_map[i][j] == 3 %}
-                        style="background-image: url({{url_for('static', filename='images/rocks.jpg')}});"
-                    {% endif %}
-                    >
+                <div class="bg-white px-3 py-2" style="background-image: url({{url_for('static', filename=images[game_map[i][j]])}});">
                     <span>({{i}}:{{j}}) dataType:({{game_map[i][j]}})</span>
                 </div>
             {% endfor %}
