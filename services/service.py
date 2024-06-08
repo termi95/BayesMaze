@@ -1,4 +1,4 @@
-from flask import json
+from flask import json, render_template
 import numpy as np
 from collections import deque
 
@@ -11,16 +11,6 @@ obstacle_density = 0.3
 start_position = (0, 0)
 target_value = 2
 visited = set()
-game_board = """<div class="flex h-3/4 flex-col">
-        <div class="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
-          <div class="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
-            <div class="w-full grid grid-cols-4 grid-rows-4 gap-px">
-              {{GameBoard}}
-            </div>
-          </div>
-        </div>
-      </div>
-"""
 
 def generate_survivor():
     while True:
@@ -103,17 +93,10 @@ def calculate_probabilities(matrix):
 
     return probabilities
 
-def get_html_game_board(game_map):
-    html = []
+def get_html_game_board(game_map):    
     rows, cols = game_map.shape
-    for i in range(rows):
-        for j in range(cols):
-            html.append("""<div class="bg-white px-3 py-2">
-                <span>({row}:{col}) dataType:({dataType})</span>
-              </div>
-            """.format(row=i,col=j,dataType=(game_map[i][j])))
-    return "".join(html)
-
+    return render_template("game_board.html", rows=rows, cols=cols, game_map=game_map)
+    
 def get_game_data():
     data = {}
     while  True:    
@@ -124,14 +107,13 @@ def get_game_data():
         print('Map was impossible to solve, new map is generating.')
 
     probabilities = calculate_probabilities(game_map)
-    game_board_finished = game_board.replace("{{GameBoard}}", get_html_game_board(game_map))
     
-    data["game_board"] = game_board_finished
+    data["game_board"] = get_html_game_board(game_map)
     data["probabilities"] = probabilities.tolist()
     data["game_map"] = game_map.tolist()
     data["shortest_path"] = shortest_path
     
     # For debug
-    #print(json.dumps(data)) 
+    #print(json.dumps(data))
     
     return json.dumps(data)
