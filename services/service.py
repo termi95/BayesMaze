@@ -11,7 +11,7 @@ obstacle_density = 0.3
 start_position = (0, 0)
 target_value = 2
 visited = set()
-game_images_dic = {1:'',2:'',3:'images/rocks.jpg'}
+game_images_dic = {0:'images/water.jpeg', 1:'images/water.jpeg', 2:'images/water.jpeg', 3:'images/rocks.jpg'}
 
 def generate_survivor():
     while True:
