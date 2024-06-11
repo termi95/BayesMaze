@@ -1,8 +1,13 @@
 const gameSection = document.getElementById("game");
+const initUserSelectedTiles = [[0, 0]];
+let userSelectedTiles = [];
+let shortestPath = [];
 
 async function scrollToGame() {
   gameSection.scrollIntoView({ behavior: "smooth" });
+  userSelectedTiles = initUserSelectedTiles;
   await prepareGame();
+  addEventClick();
 }
 
 async function prepareGame() {
@@ -11,6 +16,7 @@ async function prepareGame() {
   }
   const gameData = await getGameData();
   gameSection.insertAdjacentHTML("afterbegin", gameData["game_board"]);
+  shortestPath = gameData["shortest_path"];
 }
 
 async function getGameData() {
@@ -20,4 +26,78 @@ async function getGameData() {
       return json;
     });
   return result;
+}
+
+function addEventClick() {
+  const tiles = document.getElementsByClassName("board-tile");
+  for (let index = 0; index < tiles.length; index++) {
+    tiles[index].addEventListener("click", (x) => {
+      const row = parseInt(x.target.getAttribute("row"));
+      const col = parseInt(x.target.getAttribute("col"));
+      const type = parseInt(x.target.getAttribute("type"));
+      
+      if (!isValidMove(x.target, row, col, type)) {
+        return;
+      }
+
+      userSelectedTiles.push([row, col]);
+      if (type === 2 && x.target.tagName === "IMG") {
+        x.target.parentElement.classList.add("picked");        
+      }else{
+        x.target.classList.add("picked");
+      }
+
+      if (checkWinCondition(type)) {
+        console.log("you won");
+      }
+    });
+  }
+}
+
+function isValidMove(element, row, col, type) {
+  if (isOnBoard(row, col) || isRock(type) || isStartingPoint(row, col)) {
+    return false;
+  }
+
+  if (isLastPickTile(row, col)) {
+    userSelectedTiles.pop();    
+    if (type === 2 && element.tagName === "IMG") {
+      element.parentElement.classList.remove("picked");        
+    }
+    else
+    {
+      element.classList.remove("picked");
+    }
+    return false;
+  }
+
+  const lastPickTile = userSelectedTiles[userSelectedTiles.length - 1];
+  const lastRow = lastPickTile[0];
+  const lastCol = lastPickTile[1];
+  const validsMoves = [[lastRow -1, lastCol], [lastRow +1, lastCol], [lastRow, lastCol -1], [lastRow, lastCol +1]]
+  return compareArrays(validsMoves,[row,col]);
+}
+
+function isStartingPoint(row, col) {
+  return row === 0 && col === 0;
+}
+
+function isLastPickTile(row, col) {
+  return compareArrays(userSelectedTiles[userSelectedTiles.length - 1], [row,col]);
+}
+
+function isRock(type) {
+  return type === 3;
+}
+
+function isOnBoard(row, col) {
+  return row < 0 || col < 0 || row > 7 || col > 7;
+}
+
+function compareArrays(first, second) {
+  return JSON.stringify(first).indexOf(JSON.stringify(second)) != -1
+}
+
+function checkWinCondition(type) {
+  return type == 2 && compareArrays(shortestPath,userSelectedTiles);
 }

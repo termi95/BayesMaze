@@ -111,7 +111,6 @@ def get_game_data():
     
     data["game_board"] = get_html_game_board(game_map)
     data["probabilities"] = probabilities.tolist()
-    data["game_map"] = game_map.tolist()
     data["shortest_path"] = shortest_path
     
     # For debug
