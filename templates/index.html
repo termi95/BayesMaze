@@ -6,6 +6,35 @@
   <title>Python Projekt</title>
   <style>
     .picked {border: 2px solid red;}
+    /* Tooltip container */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    }
+
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 6px;
+    
+      /* Position the tooltip text - see examples below! */
+      position: absolute;
+      z-index: 1;
+      top: 75%;
+      left: 50%;
+      margin-left: -60px;
+    }
+
+    /* Show the tooltip text when you mouse over the tooltip container */
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
   </style>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -39,7 +68,7 @@
             <h1 class="mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Symulator poszukiwań rozbitków</h1>
             <p class="mt-6 text-lg leading-8 text-gray-600">Skorzystaj z twierdzenia Bayesa, aby w sposób matematyczny ponownie oszacować prawdopodobieństwo i podejmować decyzje, mając na celu możliwie najszybsze zlokalizowanie rozbitka.</p>
             <div class="mt-10 flex items-center gap-x-6">
-              <button onClick="scrollToGame()" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Rozpocznij</button>
+              <button onClick="scrollToGame()" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" id="game-starter">Rozpocznij</button>
 
               <p class="text-sm font-semibold leading-6 text-gray-900">Lub scrolluj w dół</p>
               <span class="animate-bounce -ml-3 -mb-1">↓</span>
@@ -69,6 +98,12 @@
       </div>      
     </div>
   </div>
+  <dialog close id="winer-dialog">
+    <p id="winer-dialog-text">Greetings, one and all!</p>
+    <form method="dialog">
+      <button onClick="backToGameStarter()">OK</button>
+    </form>
+  </dialog>
 
   <!-- SCRIPT  -->
   <script type="text/javascript" src="{{url_for('static', filename='/scripts/index.js')}}"></script>

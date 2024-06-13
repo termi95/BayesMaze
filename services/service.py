@@ -94,9 +94,9 @@ def calculate_probabilities(matrix):
 
     return probabilities
 
-def get_html_game_board(game_map):    
+def get_html_game_board(game_map, probabilities):    
     rows, cols = game_map.shape
-    return render_template("game_board.html", rows=rows, cols=cols, game_map=game_map, images = game_images_dic)
+    return render_template("game_board.html", rows=rows, cols=cols, game_map=game_map, images = game_images_dic, probabilities=probabilities)
     
 def get_game_data():
     data = {}
@@ -109,7 +109,7 @@ def get_game_data():
 
     probabilities = calculate_probabilities(game_map)
     
-    data["game_board"] = get_html_game_board(game_map)
+    data["game_board"] = get_html_game_board(game_map, probabilities)
     data["probabilities"] = probabilities.tolist()
     data["shortest_path"] = shortest_path
     
