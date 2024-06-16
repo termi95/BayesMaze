@@ -7,6 +7,7 @@ let shortestPath = [];
 
 async function scrollToGame() {
   gameSection.scrollIntoView({ behavior: "smooth" });
+  winerDialog.classList.add("hidden")
   userSelectedTiles = initUserSelectedTiles;
   await prepareGame();
   addEventClick();
@@ -35,39 +36,44 @@ async function getGameData() {
 }
 
 function addEventClick() {
-  const tiles = document.getElementsByClassName("board-tile");
-  for (let index = 0; index < tiles.length; index++) {
-    tiles[index].addEventListener("click", (x) => {
-      const row = parseInt(x.target.getAttribute("row"));
-      const col = parseInt(x.target.getAttribute("col"));
-      const type = parseInt(x.target.getAttribute("type"));
+  gameSection.addEventListener("click", (event) => {
+    const target = event.target.closest(".board-tile");
+    if (!target) return;
 
-      if (!isValidMove(x.target, row, col, type)) {
-        return;
-      }
+    const row = parseInt(target.getAttribute("row"));
+    const col = parseInt(target.getAttribute("col"));
+    const type = parseInt(target.getAttribute("type"));
 
-      userSelectedTiles.push([row, col]);
-      if (type === 2 && x.target.tagName === "IMG") {
-        x.target.parentElement.classList.add("picked");
-      } else {
-        x.target.classList.add("picked");
-      }
-      CheckIfPlayerWonGame(type);
-    });
-  }
+    if (!isValidMove(target, row, col, type)) {
+      return;
+    }
+
+    userSelectedTiles.push([row, col]);
+    if (type === 2 && target.tagName === "IMG") {
+      target.parentElement.classList.add("ring-8");
+    } else {
+      target.classList.add("ring-8");
+    }
+
+    const clickSound = new Audio("static/sounds/click.mp3");
+    clickSound.play();
+
+    checkIfPlayerWonGame(type);
+  });
 }
 
 function isValidMove(element, row, col, type) {
+
   if (isOnBoard(row, col) || isRock(type) || isStartingPoint(row, col)) {
     return false;
-  }
+  }  
 
   if (isLastPickTile(row, col)) {
     userSelectedTiles.pop();
     if (type === 2 && element.tagName === "IMG") {
-      element.parentElement.classList.remove("picked");
+      element.parentElement.classList.remove("ring-8");
     } else {
-      element.classList.remove("picked");
+      element.classList.remove("ring-8");
     }
     return false;
   }
@@ -115,19 +121,18 @@ function checkIfPlayerHadShortestPath() {
   return compareArrays(shortestPath, userSelectedTiles);  
 }
 
-function CheckIfPlayerWonGame(type) {
+function checkIfPlayerWonGame(type) {
+  const winSound = new Audio("static/sounds/win.mp3");
+  const loseSound = new Audio("static/sounds/lose.mp3");
+
   if (checkIfPlayerFoundSurvivors(type)) {
     if (checkIfPlayerHadShortestPath()) {
-      winerDialogText.innerText = "Znalazłeś rozbitków wykorzystując najkrótszą drogę :).";
+      winerDialogText.innerText = "Znalazłeś rozbitków wykorzystując najkrótszą drogę! 😁";
+      winSound.play();
     }else {
-      winerDialogText.innerText = "Znalazłeś rozbitków ale twoja droga nie była najkrótszą :(.";
+      winerDialogText.innerText = "Znalazłeś rozbitków ale twoja droga nie była najkrótszą 🥲";
+      loseSound.play();
     }
-    winerDialog.showModal();
+    winerDialog.classList.remove("hidden");
   }  
-}
-
-function backToGameStarter() {
-  const gameStarter = document.getElementById("game-starter");  
-  clearBoard();
-  gameStarter.scrollIntoView({ behavior: "smooth" });
 }

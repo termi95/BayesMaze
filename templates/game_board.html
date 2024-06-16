@@ -1,20 +1,26 @@
-<div class="flex h-screen flex-col p-5">
+<div class="flex h-screen flex-col">
   <div class="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
     <div class="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
       <div class="w-full grid grid-cols-8 grid-rows-8 gap-px">
         {% for i in range(rows) -%}
           {% for j in range(cols) -%}
-            <div row="{{i}}" col="{{j}}" type="{{game_map[i][j]}}" class="bg-white px-3 py-2 bg-cover bg-center flex items-center justify-center overflow-hidden board-tile tooltip" style="background-image: url({{url_for('static', filename=images[game_map[i][j]])}});">
+            <div row="{{i}}" col="{{j}}" type="{{game_map[i][j]}}"
+              class="bg-white px-3 py-2 bg-cover bg-center flex items-center justify-center overflow-hidden board-tile tooltip group relative
+              ring-inset ring-sky-500 transition-all duration-150"
+              style="background-image: url({{url_for('static', filename=images[game_map[i][j]])}});">
               {% if game_map[i][j] == 1 -%}
-                <img row="{{i}}" col="{{j}}" type="{{game_map[i][j]}}" src="{{url_for('static', filename='/images/boat.png')}}" class="w-20"/>
+                <img row="{{i}}" col="{{j}}" type="{{game_map[i][j]}}" src="{{url_for('static', filename='/images/boat.png')}}"
+                class="w-20 animate-boat select-none pointer-events-none"/>
               {% endif -%}
 
               {% if game_map[i][j] == 2 -%}
-              <img row="{{i}}" col="{{j}}" type="{{game_map[i][j]}}" src="{{url_for('static', filename='/images/human.png')}}" class="w-20"/>
+                <img row="{{i}}" col="{{j}}" type="{{game_map[i][j]}}" src="{{url_for('static', filename='/images/human.png')}}" class="w-20"/>
               {% endif -%}
-              <span class="tooltiptext">{{probabilities[i][j]}}</span>
-              <!-- debugger jest tutaj :D  -->
-              <!-- <span class="text-md text-white bg-gray-800/50 rounded-full p-1 relative top-0 left-0" >({{i}}:{{j}}) dataType:({{game_map[i][j]}})</span> -->
+              
+              <span class="absolute bottom-0 w-1/3 left-1/2 -translate-x-1/2 bg-black/50 rounded-t-md px-5 py-1 text-center select-none pointer-events-none
+                translate-y-full group-hover:translate-y-0 transition-all backdrop-blur-sm text-gray-800 group-hover:text-white text-md">
+                {{probabilities[i][j]}}
+              </span>
             </div>
           {% endfor -%}
         {% endfor -%}
